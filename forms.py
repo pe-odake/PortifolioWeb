@@ -1,33 +1,35 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, TextAreaField, PasswordField, SelectField, BooleanField, URLField, HiddenField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional, URL
+from wtforms import StringField, TextAreaField, PasswordField, SelectField, BooleanField, URLField, HiddenField, SubmitField
+from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional, URL, ValidationError
 from wtforms.widgets import TextArea
 from models import Category, Tag, User
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    password = PasswordField('Senha', validators=[DataRequired()])
+    remember_me = BooleanField('Lembrar de mim')
+    submit = SubmitField('Entrar')
 
 class RegisterForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=80)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    first_name = StringField('First Name', validators=[DataRequired(), Length(max=80)])
-    last_name = StringField('Last Name', validators=[DataRequired(), Length(max=80)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
-    password_confirm = PasswordField('Confirm Password', 
-                                   validators=[DataRequired(), EqualTo('password')])
+    username = StringField('Nome de usuário', validators=[DataRequired(), Length(min=3, max=80)])
+    email = StringField('E-mail', validators=[DataRequired(), Email()])
+    first_name = StringField('Nome', validators=[DataRequired(), Length(max=80)])
+    last_name = StringField('Sobrenome', validators=[DataRequired(), Length(max=80)])
+    password = PasswordField('Senha', validators=[DataRequired(), Length(min=6)])
+    password2 = PasswordField('Confirmar senha', 
+                             validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Cadastrar')
     
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user:
-            raise ValidationError('Username already taken. Please choose a different one.')
+            raise ValidationError('Nome de usuário já existe. Escolha outro.')
     
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
-            raise ValidationError('Email already registered. Please use a different one.')
+            raise ValidationError('E-mail já cadastrado. Use outro e-mail.')
 
 class ForgotPasswordForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -61,7 +63,8 @@ class ProjectForm(FlaskForm):
     
     def __init__(self, *args, **kwargs):
         super(ProjectForm, self).__init__(*args, **kwargs)
-        self.category_id.choices = [(0, 'No Category')] + [(c.id, c.name) for c in Category.query.all()]
+        categories = [(0, 'Sem categoria')] + [(c.id, c.name) for c in Category.query.all()]
+        self.category_id.choices = categories
 
 class CategoryForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(max=80)])

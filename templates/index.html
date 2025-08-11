@@ -15,10 +15,10 @@
         <div class="row align-items-center min-vh-75">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold text-white mb-4 fade-in-up">
-                    Olá, eu sou <span class="text-gradient-light">{{ site_settings.owner_name or 'Pedro' }}</span>
+                    Olá, eu sou <span class="text-gradient-light">Pedro Odake</span>
                 </h1>
                 <p class="lead text-white-75 mb-4 fade-in-up" style="animation-delay: 0.2s;">
-                    {{ site_settings.site_description or 'Desenvolvedor apaixonado por criar soluções digitais inovadoras e experiências únicas.' }}
+                    Estudante do SENAI Morvan Figueiredo, desenvolvedor apaixonado por criar soluções web inovadoras com HTML5, CSS3, JavaScript e Node.js.
                 </p>
                 <div class="d-flex gap-3 flex-wrap fade-in-up" style="animation-delay: 0.4s;">
                     <a href="{{ url_for('projects') }}" class="btn btn-light btn-lg rounded-pill px-4">
@@ -40,9 +40,19 @@
                     <img src="{{ url_for('static', filename='uploads/' + site_settings.hero_image) }}" 
                          alt="{{ site_settings.owner_name }}" class="hero-image img-fluid rounded-3 shadow-lg">
                     {% else %}
-                    <div class="hero-placeholder bg-light rounded-3 shadow-lg p-5 text-center">
-                        <i class="fas fa-user fa-5x text-muted mb-3"></i>
-                        <p class="text-muted">Sua foto aqui</p>
+                    <div class="hero-placeholder bg-gradient-primary rounded-3 shadow-lg p-5 text-center position-relative overflow-hidden">
+                        <div class="tech-icons">
+                            <i class="fab fa-html5 fa-3x text-white opacity-75 position-absolute" style="top: 20px; left: 30px;"></i>
+                            <i class="fab fa-css3-alt fa-2x text-white opacity-50 position-absolute" style="top: 60px; right: 40px;"></i>
+                            <i class="fab fa-js-square fa-2x text-white opacity-75 position-absolute" style="bottom: 60px; left: 40px;"></i>
+                            <i class="fab fa-node-js fa-3x text-white opacity-50 position-absolute" style="bottom: 20px; right: 30px;"></i>
+                            <i class="fab fa-figma fa-2x text-white opacity-75 position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></i>
+                        </div>
+                        <div class="hero-avatar bg-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 120px; height: 120px; z-index: 2; position: relative;">
+                            <i class="fas fa-code fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="text-white mt-3 mb-0">Pedro Odake</h5>
+                        <small class="text-white-50">Full Stack Developer</small>
                     </div>
                     {% endif %}
                 </div>
@@ -58,31 +68,64 @@
     </div>
 </section>
 
-<!-- Stats Section -->
+<!-- Skills Section -->
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="row g-4">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Minhas Habilidades</h2>
+            <p class="text-muted">Tecnologias que domino e utilizo nos meus projetos</p>
+        </div>
+        
+        <div class="row justify-content-center mb-4">
+            <div class="col-auto">
+                <div class="skill-badge me-2 mb-2">
+                    <i class="fab fa-html5 me-2"></i>HTML5
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="skill-badge me-2 mb-2">
+                    <i class="fab fa-css3-alt me-2"></i>CSS3
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="skill-badge me-2 mb-2">
+                    <i class="fab fa-js-square me-2"></i>JavaScript
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="skill-badge me-2 mb-2">
+                    <i class="fab fa-node-js me-2"></i>Node.js
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="skill-badge me-2 mb-2">
+                    <i class="fab fa-figma me-2"></i>Figma
+                </div>
+            </div>
+        </div>
+        
+        <div class="row g-4 mt-3">
             <div class="col-md-3 col-6">
                 <div class="text-center">
-                    <div class="stats-number text-primary fw-bold">{{ project_count or 0 }}</div>
+                    <div class="stats-number text-primary fw-bold">{{ project_count or 5 }}</div>
                     <div class="stats-label text-muted">Projetos</div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="text-center">
-                    <div class="stats-number text-success fw-bold">{{ total_likes or 0 }}</div>
-                    <div class="stats-label text-muted">Curtidas</div>
+                    <div class="stats-number text-success fw-bold">31</div>
+                    <div class="stats-label text-muted">Seguidores</div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="text-center">
-                    <div class="stats-number text-info fw-bold">{{ total_comments or 0 }}</div>
-                    <div class="stats-label text-muted">Comentários</div>
+                    <div class="stats-number text-info fw-bold">37</div>
+                    <div class="stats-label text-muted">Seguindo</div>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="text-center">
-                    <div class="stats-number text-warning fw-bold">{{ years_experience or 2 }}+</div>
+                    <div class="stats-number text-warning fw-bold">2+</div>
                     <div class="stats-label text-muted">Anos</div>
                 </div>
             </div>
@@ -270,6 +313,34 @@
     justify-content: center;
     align-items: center;
 }
+.tech-icons i {
+    animation: float 3s ease-in-out infinite;
+}
+.tech-icons i:nth-child(1) { animation-delay: 0s; }
+.tech-icons i:nth-child(2) { animation-delay: 0.5s; }
+.tech-icons i:nth-child(3) { animation-delay: 1s; }
+.tech-icons i:nth-child(4) { animation-delay: 1.5s; }
+.tech-icons i:nth-child(5) { animation-delay: 2s; }
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+.skill-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-block;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.skill-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    color: white;
+}
 .scroll-indicator {
     position: absolute;
     bottom: 30px;
@@ -284,5 +355,8 @@
 }
 .stats-number { font-size: 2.5rem; line-height: 1; }
 .stats-label { font-size: 0.9rem; font-weight: 500; }
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
 </style>
 {% endblock %}
