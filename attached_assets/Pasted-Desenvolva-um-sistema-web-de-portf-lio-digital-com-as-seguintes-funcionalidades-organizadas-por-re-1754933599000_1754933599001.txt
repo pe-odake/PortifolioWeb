@@ -1,0 +1,70 @@
+Desenvolva um sistema web de portfólio digital com as seguintes funcionalidades, organizadas por área e com foco em usabilidade, design responsivo e integração com redes sociais.
+
+🧑‍💼 Área Administrativa (Proprietário do Portfólio)
+Permitir que o proprietário do portfólio tenha controle completo sobre o conteúdo do site. As funcionalidades necessárias são:
+
+CRUD de Projetos e Conquistas: Criar, editar, excluir e listar projetos e conquistas.
+
+Upload de Mídia: Permitir envio de imagens, vídeos ou links externos (como YouTube, Behance, GitHub).
+
+Categorias e Tags: Organização por categorias ou tags para facilitar a navegação.
+
+Status de Publicação: Marcar como "publicado" ou "rascunho".
+
+Dashboard intuitivo com resumo de projetos, curtidas e comentários recebidos.
+
+🌍 Área Pública (Visitantes)
+Interface atrativa, responsiva e navegável por qualquer visitante:
+
+Visualização de Projetos e Conquistas com títulos, descrições, mídias e tags.
+
+Botão de Curtir com contador visível.
+
+Campo de Comentário (apenas para usuários autenticados).
+
+Botão de Compartilhar no LinkedIn com geração de prévia personalizada (título, imagem e link direto para o projeto).
+
+🔐 Área de Autenticação (Visitantes)
+Permitir que visitantes se cadastrem e interajam no sistema:
+
+Cadastro e Login de Usuário com nome, e-mail e senha.
+
+Recuperação de Senha via e-mail.
+
+Perfil do Usuário com foto, bio e informações básicas.
+
+Sistema de comentários e feedbacks em projetos visíveis publicamente.
+
+🤖 Requisitos Técnicos e Auxílio por IAs
+Utilizar Replit AI (Ghostwriter) para geração e depuração de código.
+
+Auxiliar-se com outras IAs como ChatGPT, GitHub Copilot ou Gemini para:
+
+Estruturação do projeto (frontend + backend).
+
+Design de interface (UX/UI).
+
+Modelagem de dados.
+
+Criação de documentação técnica e instruções de uso.
+
+Tecnologias sugeridas:
+
+Frontend: React, Next.js ou HTML/CSS/JS puro com Bootstrap ou Tailwind.
+
+Backend: Node.js (Express), Flask ou Django.
+
+Banco de Dados: MongoDB, PostgreSQL ou SQLite.
+
+Autenticação: JWT ou Firebase Auth.
+
+Deploy: Replit, Vercel, Render ou Heroku.
+
+📝 Extras (Opcional)
+Modo escuro/claro.
+
+SEO básico para projetos publicados.
+
+Página "Sobre Mim" do proprietário.
+
+Analytics de acessos, curtidas e comentários.
