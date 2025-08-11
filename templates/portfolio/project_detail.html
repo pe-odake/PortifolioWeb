@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - {{ site_settings.site_title }}{% endblock %}
+
+{% block meta %}
+{{ super() }}
+<meta name="description" content="{{ project.description }}">
+<meta name="keywords" content="{% for tag in project.tags %}{{ tag.name }}, {% endfor %}{{ project.category.name if project.category }}">
+
+<!-- Open Graph tags for social media sharing -->
+<meta property="og:title" content="{{ project.title }}">
+<meta property="og:description" content="{{ project.description }}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ request.url }}">
+{% if project.featured_image %}
+<meta property="og:image" content="{{ url_for('uploaded_file', filename='projects/' + project.featured_image, _external=True) }}">
+{% endif %}
+
+<!-- Twitter Card tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ project.title }}">
+<meta name="twitter:description" content="{{ project.description }}">
+{% if project.featured_image %}
+<meta name="twitter:image" content="{{ url_for('uploaded_file', filename='projects/' + project.featured_image, _external=True) }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Project Header -->
+<section class="py-5">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('projects') }}">Projects</a></li>
+                {% if project.category %}
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('projects', category=project.category.id) }}">{{ project.category.name }}</a>
+                </li>
+                {% endif %}
+                <li class="breadcrumb-item active">{{ project.title }}</li>
+            </ol>
+        </nav>
+        
+        <div class="row g-5">
+            <!-- Project Image -->
+            <div class="col-lg-6">
+                {% if project.featured_image %}
+                <img src="{{ url_for('uploaded_file', filename='projects/' + project.featured_image) }}" 
+                     alt="{{ project.title }}" 
+                     class="img-fluid rounded shadow gallery-item">
+                {% else %}
+                <div class="bg-light rounded d-flex align-items-center justify-content-center shadow" 
+                     style="height: 400px;">
+                    <i class="fas fa-image fa-4x text-muted"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Project Info -->
+            <div class="col-lg-6">
+                <div class="h-100 d-flex flex-column">
+                    <!-- Title and Meta -->
+                    <div class="mb-4">
+                        <h1 class="display-5 fw-bold mb-3">{{ project.title }}</h1>
+                        <p class="lead text-muted">{{ project.description }}</p>
+                        
+                        <!-- Project Meta -->
+                        <div class="d-flex flex-wrap gap-3 mb-3">
+                            {% if project.category %}
+                            <span class="badge bg-primary fs-6">
+                                <i class="fas fa-folder me-1"></i>{{ project.category.name }}
+                            </span>
+                            {% endif %}
+                            <span class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ project.created_at.strftime('%B %d, %Y') }}
+                            </span>
+                        </div>
+                        
+                        <!-- Tags -->
+                        {% if project.tags %}
+                        <div class="mb-3">
+                            {% for tag in project.tags %}
+                            <a href="{{ url_for('projects', tag=tag.name) }}" class="tag">{{ tag.name }}</a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Project Links -->
+                    <div class="mb-4">
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if project.demo_url %}
+                            <a href="{{ project.demo_url }}" class="btn btn-primary" target="_blank" rel="noopener">
+                                <i class="fas fa-play me-2"></i>Live Demo
+                            </a>
+                            {% endif %}
+                            {% if project.github_url %}
+                            <a href="{{ project.github_url }}" class="btn btn-outline-dark" target="_blank" rel="noopener">
+                                <i class="fab fa-github me-2"></i>Source Code
+                            </a>
+                            {% endif %}
+                            {% if project.external_url %}
+                            <a href="{{ project.external_url }}" class="btn btn-outline-primary" target="_blank" rel="noopener">
+                                <i class="fas fa-external-link-alt me-2"></i>Learn More
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Engagement Actions -->
+                    <div class="mt-auto">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <!-- Like Button -->
+                            {% if current_user.is_authenticated %}
+                            <button class="like-btn btn {% if project.is_liked_by(current_user) %}liked{% endif %}" 
+                                    data-project-id="{{ project.id }}">
+                                <i class="{% if project.is_liked_by(current_user) %}fas{% else %}far{% endif %} fa-heart heart-icon me-2"></i>
+                                <span class="like-count">{{ project.like_count }}</span>
+                            </button>
+                            {% else %}
+                            <span class="text-muted">
+                                <i class="far fa-heart me-2"></i>{{ project.like_count }} likes
+                            </span>
+                            {% endif %}
+                            
+                            <!-- Comment Count -->
+                            <span class="text-muted">
+                                <i class="far fa-comment me-2"></i>{{ project.comment_count }} comments
+                            </span>
+                        </div>
+                        
+                        <!-- Share Buttons -->
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="#" class="share-btn share-btn-linkedin" 
+                               data-platform="linkedin" 
+                               data-url="{{ request.url }}" 
+                               data-title="{{ project.title }}" 
+                               data-description="{{ project.description }}">
+                                <i class="fab fa-linkedin"></i>Share on LinkedIn
+                            </a>
+                            
+                            <button class="btn btn-outline-secondary btn-sm native-share-btn" 
+                                    data-title="{{ project.title }}" 
+                                    data-description="{{ project.description }}" 
+                                    data-url="{{ request.url }}"
+                                    style="display: none;">
+                                <i class="fas fa-share me-1"></i>Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Content -->
+{% if project.content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="h4 fw-bold mb-4">Project Details</h2>
+                        <div class="project-content">
+                            {{ project.content|safe|nl2br }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Project Media Gallery -->
+{% if project.media %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="h4 fw-bold mb-4 text-center">Project Gallery</h2>
+        <div class="row g-3">
+            {% for media in project.media %}
+            <div class="col-md-4 col-sm-6">
+                {% if media.media_type == 'image' %}
+                <img src="{{ url_for('uploaded_file', filename=media.filename) }}" 
+                     alt="{{ media.original_filename }}" 
+                     class="img-fluid rounded gallery-item shadow-sm">
+                {% else %}
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file fa-3x text-primary mb-3"></i>
+                        <h6 class="card-title">{{ media.original_filename }}</h6>
+                        <a href="{{ url_for('uploaded_file', filename=media.filename) }}" 
+                           class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="fas fa-download me-1"></i>Download
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Comments Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="h4 fw-bold mb-4">
+                    <i class="fas fa-comments me-2"></i>Comments ({{ comments|length }})
+                </h2>
+                
+                <!-- Add Comment Form -->
+                {% if current_user.is_authenticated %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('add_comment', id=project.id) }}">
+                            {{ comment_form.hidden_tag() }}
+                            <div class="d-flex gap-3">
+                                {% if current_user.profile_image %}
+                                <img src="{{ url_for('uploaded_file', filename='profiles/' + current_user.profile_image) }}" 
+                                     alt="Your profile" class="profile-img">
+                                {% else %}
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px; min-width: 40px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    {{ comment_form.content(class="form-control mb-3", rows="3") }}
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Post Comment
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <a href="{{ url_for('login') }}">Login</a> or 
+                    <a href="{{ url_for('register') }}">register</a> to post a comment.
+                </div>
+                {% endif %}
+                
+                <!-- Comments List -->
+                {% if comments %}
+                <div class="comments-list">
+                    {% for comment in comments %}
+                    <div class="comment card shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="d-flex gap-3">
+                                {% if comment.author.profile_image %}
+                                <img src="{{ url_for('uploaded_file', filename='profiles/' + comment.author.profile_image) }}" 
+                                     alt="{{ comment.author.full_name }}" class="profile-img">
+                                {% else %}
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px; min-width: 40px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <span class="comment-author">{{ comment.author.full_name }}</span>
+                                            <span class="comment-date ms-2">
+                                                {{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0">{{ comment.content }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-comment fa-3x mb-3 opacity-50"></i>
+                    <p>No comments yet. Be the first to share your thoughts!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Projects -->
+{% if related_projects %}
+<section class="py-5">
+    <div class="container">
+        <h2 class="h4 fw-bold mb-4 text-center">Related Projects</h2>
+        <div class="row g-4">
+            {% for related_project in related_projects %}
+            <div class="col-lg-4">
+                {% with project = related_project %}
+                {% include 'components/project_card.html' %}
+                {% endwith %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('projects') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>View All Projects
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Convert newlines to paragraphs in project content
+    const projectContent = document.querySelector('.project-content');
+    if (projectContent) {
+        const content = projectContent.innerHTML;
+        const paragraphs = content.split('\n').filter(p => p.trim()).map(p => `<p>${p.trim()}</p>`);
+        projectContent.innerHTML = paragraphs.join('');
+    }
+    
+    // Auto-resize comment textarea
+    const commentTextarea = document.querySelector('textarea[name="content"]');
+    if (commentTextarea) {
+        commentTextarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Erro Interno do Servidor{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h1 class="display-1">500</h1>
+            <p class="fs-3"><span class="text-danger">Oops!</span> Algo deu errado.</p>
+            <p class="lead">
+                Ocorreu um erro interno no servidor.
+            </p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Voltar ao Início</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

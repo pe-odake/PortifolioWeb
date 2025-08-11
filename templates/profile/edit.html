@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - {{ site_settings.site_title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Edit Profile
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Current Profile Image -->
+                        {% if current_user.profile_image %}
+                        <div class="text-center mb-4">
+                            <img src="{{ url_for('uploaded_file', filename='profiles/' + current_user.profile_image) }}" 
+                                 alt="Current Profile" class="profile-img-lg rounded-circle border">
+                            <p class="text-muted mt-2">Current Profile Image</p>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.first_name.label(class="form-label") }}
+                                {{ form.first_name(class="form-control" + (" is-invalid" if form.first_name.errors else "")) }}
+                                {% if form.first_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.first_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {{ form.last_name.label(class="form-label") }}
+                                {{ form.last_name(class="form-control" + (" is-invalid" if form.last_name.errors else "")) }}
+                                {% if form.last_name.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.last_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.bio.label(class="form-label") }}
+                            {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows="4", placeholder="Tell us about yourself...") }}
+                            {% if form.bio.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.bio.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="form-text">
+                                    Maximum 500 characters
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.profile_image.label(class="form-label") }}
+                            {{ form.profile_image(class="form-control" + (" is-invalid" if form.profile_image.errors else "")) }}
+                            {% if form.profile_image.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.profile_image.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="form-text">
+                                    Upload a new profile image (JPG, PNG only, max 16MB)
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex gap-2 justify-content-between">
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Account Information -->
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Account Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">Username:</div>
+                        <div class="col-sm-8">{{ current_user.username }}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">Email:</div>
+                        <div class="col-sm-8">{{ current_user.email }}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">Member since:</div>
+                        <div class="col-sm-8">{{ current_user.created_at.strftime('%B %d, %Y') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Character counter for bio
+    const bioTextarea = document.querySelector('textarea[name="bio"]');
+    const maxLength = 500;
+    
+    if (bioTextarea) {
+        const counter = document.createElement('small');
+        counter.className = 'text-muted float-end';
+        bioTextarea.parentNode.appendChild(counter);
+        
+        function updateCounter() {
+            const remaining = maxLength - bioTextarea.value.length;
+            counter.textContent = `${remaining} characters remaining`;
+            counter.className = remaining < 50 ? 'text-warning float-end' : 'text-muted float-end';
+        }
+        
+        updateCounter();
+        bioTextarea.addEventListener('input', updateCounter);
+    }
+});
+</script>
+{% endblock %}

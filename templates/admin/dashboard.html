@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - {{ site_settings.site_title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6 fw-bold">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </h1>
+        <div class="btn-group">
+            <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>New Project
+            </a>
+        </div>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card">
+                <span class="stats-number">{{ total_projects }}</span>
+                <div>Total Projects</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card" style="background: linear-gradient(135deg, var(--success-color), #059669);">
+                <span class="stats-number">{{ published_projects }}</span>
+                <div>Published</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card" style="background: linear-gradient(135deg, var(--warning-color), #d97706);">
+                <span class="stats-number">{{ draft_projects }}</span>
+                <div>Drafts</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card" style="background: linear-gradient(135deg, var(--danger-color), #dc2626);">
+                <span class="stats-number">{{ total_likes }}</span>
+                <div>Total Likes</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Recent Projects -->
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-folder me-2"></i>Recent Projects
+                    </h5>
+                    <a href="{{ url_for('admin_projects') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_projects %}
+                        <div class="list-group list-group-flush">
+                            {% for project in recent_projects %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ project.title }}</h6>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        {{ project.created_at.strftime('%b %d, %Y') }}
+                                    </small>
+                                    <div class="mt-1">
+                                        {% if project.status == 'published' %}
+                                            <span class="badge bg-success">Published</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Draft</span>
+                                        {% endif %}
+                                        {% if project.featured %}
+                                            <span class="badge bg-info">Featured</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    {% if project.status == 'published' %}
+                                    <a href="{{ url_for('project_detail', id=project.id) }}" 
+                                       class="btn btn-outline-primary" target="_blank">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('admin_edit_project', id=project.id) }}" 
+                                       class="btn btn-outline-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-folder-open fa-3x mb-3 opacity-50"></i>
+                            <p>No projects yet. <a href="{{ url_for('admin_new_project') }}">Create your first project</a></p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Comments -->
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>Recent Comments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_comments %}
+                        <div class="list-group list-group-flush">
+                            {% for comment in recent_comments %}
+                            <div class="list-group-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    {% if comment.author.profile_image %}
+                                    <img src="{{ url_for('uploaded_file', filename='profiles/' + comment.author.profile_image) }}" 
+                                         alt="Profile" class="profile-img me-2">
+                                    {% else %}
+                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ comment.author.full_name }}</h6>
+                                        <small class="text-muted">
+                                            on <a href="{{ url_for('project_detail', id=comment.project.id) }}" 
+                                                  class="text-decoration-none">{{ comment.project.title }}</a>
+                                        </small>
+                                    </div>
+                                </div>
+                                <p class="mb-1">{{ comment.content[:100] }}{% if comment.content|length > 100 %}...{% endif %}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ comment.created_at.strftime('%b %d, %Y at %I:%M %p') }}
+                                </small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-comment-slash fa-3x mb-3 opacity-50"></i>
+                            <p>No comments yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary w-100">
+                                <i class="fas fa-plus fa-2x d-block mb-2"></i>
+                                New Project
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('admin_projects') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-folder-open fa-2x d-block mb-2"></i>
+                                Manage Projects
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('projects') }}" class="btn btn-outline-success w-100" target="_blank">
+                                <i class="fas fa-eye fa-2x d-block mb-2"></i>
+                                View Portfolio
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('edit_profile') }}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-user-cog fa-2x d-block mb-2"></i>
+                                Edit Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add animation to stats cards
+    const statsCards = document.querySelectorAll('.stats-card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in-up');
+            }
+        });
+    });
+    
+    statsCards.forEach(card => observer.observe(card));
+});
+</script>
+{% endblock %}

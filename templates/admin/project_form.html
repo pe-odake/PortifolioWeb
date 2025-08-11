@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - {{ site_settings.site_title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-{{ 'edit' if project else 'plus' }} me-2"></i>{{ title }}
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Project Title -->
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control form-control-lg" + (" is-invalid" if form.title.errors else "")) }}
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Project Description -->
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="4", placeholder="Brief description of your project...") }}
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.description.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Project Content -->
+                        <div class="mb-3">
+                            {{ form.content.label(class="form-label") }}
+                            {{ form.content(class="form-control" + (" is-invalid" if form.content.errors else ""), rows="8", placeholder="Detailed content about your project, methodology, challenges, solutions...") }}
+                            {% if form.content.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.content.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="form-text">
+                                    Detailed description of your project including technical details, challenges faced, and solutions implemented.
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Category and Tags Row -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                {{ form.category_id.label(class="form-label") }}
+                                {{ form.category_id(class="form-select" + (" is-invalid" if form.category_id.errors else "")) }}
+                                {% if form.category_id.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.category_id.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {{ form.tags.label(class="form-label") }}
+                                {{ form.tags(class="form-control" + (" is-invalid" if form.tags.errors else ""), placeholder="React, Python, Machine Learning, etc.") }}
+                                {% if form.tags.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.tags.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="form-text">
+                                        Separate tags with commas
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- URLs Section -->
+                        <div class="mb-4">
+                            <h5 class="mb-3">
+                                <i class="fas fa-link me-2"></i>Project Links
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    {{ form.external_url.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </span>
+                                        {{ form.external_url(class="form-control" + (" is-invalid" if form.external_url.errors else ""), placeholder="https://example.com") }}
+                                    </div>
+                                    {% if form.external_url.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.external_url.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    {{ form.github_url.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        {{ form.github_url(class="form-control" + (" is-invalid" if form.github_url.errors else ""), placeholder="https://github.com/username/repo") }}
+                                    </div>
+                                    {% if form.github_url.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.github_url.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    {{ form.demo_url.label(class="form-label") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-play"></i>
+                                        </span>
+                                        {{ form.demo_url(class="form-control" + (" is-invalid" if form.demo_url.errors else ""), placeholder="https://demo.example.com") }}
+                                    </div>
+                                    {% if form.demo_url.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.demo_url.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Featured Image -->
+                        <div class="mb-4">
+                            {{ form.featured_image.label(class="form-label") }}
+                            {{ form.featured_image(class="form-control" + (" is-invalid" if form.featured_image.errors else "")) }}
+                            {% if form.featured_image.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.featured_image.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="form-text">
+                                    Upload a cover image for your project (JPG, PNG only, max 16MB)
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Current featured image preview -->
+                            {% if project and project.featured_image %}
+                            <div class="mt-2">
+                                <small class="text-muted">Current image:</small>
+                                <div class="mt-1">
+                                    <img src="{{ url_for('uploaded_file', filename='projects/' + project.featured_image) }}" 
+                                         alt="Current featured image" class="img-thumbnail" style="max-width: 200px;">
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Status and Options -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                {{ form.status.label(class="form-label") }}
+                                {{ form.status(class="form-select" + (" is-invalid" if form.status.errors else "")) }}
+                                {% if form.status.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.status.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check form-switch">
+                                    {{ form.featured(class="form-check-input") }}
+                                    {{ form.featured.label(class="form-check-label") }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a href="{{ url_for('admin_projects') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancel
+                            </a>
+                            
+                            <div class="d-flex gap-2">
+                                {% if project %}
+                                <button type="submit" name="action" value="save" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Update Project
+                                </button>
+                                {% if project.status == 'draft' %}
+                                <button type="submit" name="action" value="publish" class="btn btn-success">
+                                    <i class="fas fa-rocket me-2"></i>Save & Publish
+                                </button>
+                                {% endif %}
+                                {% else %}
+                                <button type="submit" name="action" value="save" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Save Project
+                                </button>
+                                <button type="submit" name="action" value="publish" class="btn btn-success">
+                                    <i class="fas fa-rocket me-2"></i>Save & Publish
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Additional Media Upload (for existing projects) -->
+            {% if project %}
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-images me-2"></i>Project Media
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if project.media %}
+                        <div class="row g-3 mb-3">
+                            {% for media in project.media %}
+                            <div class="col-md-3">
+                                <div class="card">
+                                    {% if media.media_type == 'image' %}
+                                    <img src="{{ url_for('uploaded_file', filename=media.filename) }}" 
+                                         class="card-img-top" style="height: 150px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                         style="height: 150px;">
+                                        <i class="fas fa-file fa-3x text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="card-body p-2">
+                                        <small class="text-muted">{{ media.original_filename }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Additional media upload functionality can be added here for multiple images, videos, and documents.
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle form submission with action buttons
+    const form = document.querySelector('form');
+    const actionButtons = document.querySelectorAll('button[name="action"]');
+    
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // If publishing, set status to published
+            if (this.value === 'publish') {
+                const statusSelect = document.querySelector('select[name="status"]');
+                statusSelect.value = 'published';
+            }
+        });
+    });
+    
+    // Character counter for description
+    const descTextarea = document.querySelector('textarea[name="description"]');
+    if (descTextarea) {
+        const counter = document.createElement('small');
+        counter.className = 'text-muted float-end';
+        descTextarea.parentNode.appendChild(counter);
+        
+        function updateDescCounter() {
+            const length = descTextarea.value.length;
+            counter.textContent = `${length} characters`;
+        }
+        
+        updateDescCounter();
+        descTextarea.addEventListener('input', updateDescCounter);
+    }
+    
+    // Auto-resize textareas
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    });
+});
+</script>
+{% endblock %}
