@@ -1,108 +1,96 @@
 {% extends "base.html" %}
 
-{% block title %}Register - {{ site_settings.site_title }}{% endblock %}
+{% block title %}Cadastrar - {{ site_settings.site_title or 'Meu Portfólio' }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center py-5">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
-                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
-                        <h2 class="card-title">Create Account</h2>
-                        <p class="text-muted">Join our community and start engaging with projects</p>
+                        <h1 class="h3 fw-bold">Criar Nova Conta</h1>
+                        <p class="text-muted">Cadastre-se para curtir e comentar nos projetos</p>
                     </div>
-                    
-                    <form method="POST" novalidate>
+
+                    <form method="POST">
                         {{ form.hidden_tag() }}
                         
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                {{ form.first_name.label(class="form-label") }}
-                                {{ form.first_name(class="form-control" + (" is-invalid" if form.first_name.errors else "")) }}
-                                {% if form.first_name.errors %}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.first_name.errors %}{{ error }}{% endfor %}
-                                    </div>
-                                {% endif %}
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    {{ form.first_name(class="form-control") }}
+                                    {{ form.first_name.label }}
+                                    {% if form.first_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.first_name.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
-                            
-                            <div class="col-md-6">
-                                {{ form.last_name.label(class="form-label") }}
-                                {{ form.last_name(class="form-control" + (" is-invalid" if form.last_name.errors else "")) }}
-                                {% if form.last_name.errors %}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.last_name.errors %}{{ error }}{% endfor %}
-                                    </div>
-                                {% endif %}
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    {{ form.last_name(class="form-control") }}
+                                    {{ form.last_name.label }}
+                                    {% if form.last_name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.last_name.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            {{ form.username.label(class="form-label") }}
-                            <div class="input-group">
-                                <span class="input-group-text">@</span>
-                                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
-                            </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form.username(class="form-control") }}
+                            {{ form.username.label }}
                             {% if form.username.errors %}
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback d-block">
                                     {% for error in form.username.errors %}{{ error }}{% endfor %}
                                 </div>
-                            {% else %}
-                                <div class="form-text">Choose a unique username</div>
                             {% endif %}
                         </div>
-                        
-                        <div class="mb-3">
-                            {{ form.email.label(class="form-label") }}
-                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+
+                        <div class="form-floating mb-3">
+                            {{ form.email(class="form-control") }}
+                            {{ form.email.label }}
                             {% if form.email.errors %}
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback d-block">
                                     {% for error in form.email.errors %}{{ error }}{% endfor %}
                                 </div>
                             {% endif %}
                         </div>
-                        
-                        <div class="mb-3">
-                            {{ form.password.label(class="form-label") }}
-                            <div class="input-group">
-                                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), id="password-input") }}
-                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
-                                    <i class="fas fa-eye" id="password-icon"></i>
-                                </button>
-                            </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form.password(class="form-control") }}
+                            {{ form.password.label }}
                             {% if form.password.errors %}
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback d-block">
                                     {% for error in form.password.errors %}{{ error }}{% endfor %}
                                 </div>
-                            {% else %}
-                                <div class="form-text">Minimum 6 characters</div>
                             {% endif %}
                         </div>
-                        
-                        <div class="mb-4">
-                            {{ form.password_confirm.label(class="form-label") }}
-                            {{ form.password_confirm(class="form-control" + (" is-invalid" if form.password_confirm.errors else "")) }}
-                            {% if form.password_confirm.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.password_confirm.errors %}{{ error }}{% endfor %}
+
+                        <div class="form-floating mb-4">
+                            {{ form.password2(class="form-control") }}
+                            {{ form.password2.label }}
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.password2.errors %}{{ error }}{% endfor %}
                                 </div>
                             {% endif %}
                         </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-user-plus me-2"></i>Create Account
-                            </button>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg rounded-pill") }}
                         </div>
                     </form>
-                    
+
                     <div class="text-center mt-4">
                         <p class="text-muted">
-                            Already have an account?
-                            <a href="{{ url_for('login') }}" class="text-primary text-decoration-none fw-bold">
-                                Sign in here
+                            Já tem uma conta? 
+                            <a href="{{ url_for('login') }}" class="text-decoration-none fw-medium">
+                                Entrar aqui
                             </a>
                         </p>
                     </div>
@@ -111,40 +99,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function togglePassword() {
-    const passwordInput = document.getElementById('password-input');
-    const passwordIcon = document.getElementById('password-icon');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        passwordIcon.classList.remove('fa-eye');
-        passwordIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        passwordIcon.classList.remove('fa-eye-slash');
-        passwordIcon.classList.add('fa-eye');
-    }
-}
-
-// Real-time validation feedback
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
-    const passwordInput = document.getElementById('password-input');
-    const confirmInput = document.querySelector('input[name="password_confirm"]');
-    
-    confirmInput.addEventListener('input', function() {
-        if (this.value !== passwordInput.value) {
-            this.classList.add('is-invalid');
-            this.classList.remove('is-valid');
-        } else {
-            this.classList.remove('is-invalid');
-            this.classList.add('is-valid');
-        }
-    });
-});
-</script>
 {% endblock %}

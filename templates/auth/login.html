@@ -1,69 +1,61 @@
 {% extends "base.html" %}
 
-{% block title %}Login - {{ site_settings.site_title }}{% endblock %}
+{% block title %}Entrar - {{ site_settings.site_title or 'Meu Portfólio' }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center min-vh-100 align-items-center">
+<div class="container mt-5">
+    <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <div class="card shadow-lg">
+            <div class="card shadow-sm border-0">
                 <div class="card-body p-5">
                     <div class="text-center mb-4">
-                        <i class="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
-                        <h2 class="card-title">Welcome Back</h2>
-                        <p class="text-muted">Sign in to your account</p>
+                        <h1 class="h3 fw-bold">Entrar na Conta</h1>
+                        <p class="text-muted">Acesse sua conta para interagir com os projetos</p>
                     </div>
-                    
-                    <form method="POST" novalidate>
+
+                    <form method="POST">
                         {{ form.hidden_tag() }}
                         
-                        <div class="mb-3">
-                            {{ form.email.label(class="form-label") }}
-                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                        <div class="form-floating mb-3">
+                            {{ form.email(class="form-control") }}
+                            {{ form.email.label }}
                             {% if form.email.errors %}
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback d-block">
                                     {% for error in form.email.errors %}{{ error }}{% endfor %}
                                 </div>
                             {% endif %}
                         </div>
-                        
-                        <div class="mb-3">
-                            {{ form.password.label(class="form-label") }}
-                            <div class="input-group">
-                                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), id="password-input") }}
-                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
-                                    <i class="fas fa-eye" id="password-icon"></i>
-                                </button>
-                            </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form.password(class="form-control") }}
+                            {{ form.password.label }}
                             {% if form.password.errors %}
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback d-block">
                                     {% for error in form.password.errors %}{{ error }}{% endfor %}
                                 </div>
                             {% endif %}
                         </div>
-                        
-                        <div class="mb-3 d-flex justify-content-between align-items-center">
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
                                 {{ form.remember_me(class="form-check-input") }}
                                 {{ form.remember_me.label(class="form-check-label") }}
                             </div>
-                            <a href="{{ url_for('forgot_password') }}" class="text-primary text-decoration-none">
-                                Forgot password?
+                            <a href="{{ url_for('forgot_password') }}" class="text-decoration-none">
+                                Esqueceu a senha?
                             </a>
                         </div>
-                        
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                            </button>
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg rounded-pill") }}
                         </div>
                     </form>
-                    
+
                     <div class="text-center mt-4">
                         <p class="text-muted">
-                            Don't have an account?
-                            <a href="{{ url_for('register') }}" class="text-primary text-decoration-none fw-bold">
-                                Sign up here
+                            Não tem uma conta? 
+                            <a href="{{ url_for('register') }}" class="text-decoration-none fw-medium">
+                                Cadastre-se aqui
                             </a>
                         </p>
                     </div>
@@ -72,23 +64,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function togglePassword() {
-    const passwordInput = document.getElementById('password-input');
-    const passwordIcon = document.getElementById('password-icon');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        passwordIcon.classList.remove('fa-eye');
-        passwordIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        passwordIcon.classList.remove('fa-eye-slash');
-        passwordIcon.classList.add('fa-eye');
-    }
-}
-</script>
 {% endblock %}

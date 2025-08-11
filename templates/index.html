@@ -1,28 +1,89 @@
 {% extends "base.html" %}
 
-{% block title %}Home - {{ site_settings.site_title }}{% endblock %}
+{% block title %}Início - {{ site_settings.site_title or 'Meu Portfólio' }}{% endblock %}
+
+{% block meta %}
+{{ super() }}
+<meta property="og:title" content="Portfólio de {{ site_settings.owner_name or 'Pedro' }}">
+<meta property="og:description" content="{{ site_settings.site_description or 'Conheça meus projetos e conquistas profissionais' }}">
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
-        <div class="hero-content text-center text-white">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-4 fade-in-up">
-                        Welcome to {{ site_settings.owner_name }}'s Portfolio
-                    </h1>
-                    <p class="lead mb-4 fade-in-up" style="animation-delay: 0.2s;">
-                        {{ site_settings.site_description or "Discover my creative journey through innovative projects and achievements." }}
-                    </p>
-                    <div class="d-flex gap-3 justify-content-center flex-wrap fade-in-up" style="animation-delay: 0.4s;">
-                        <a href="{{ url_for('projects') }}" class="btn btn-light btn-lg">
-                            <i class="fas fa-folder-open me-2"></i>View Projects
-                        </a>
-                        <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-user me-2"></i>About Me
-                        </a>
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-white mb-4 fade-in-up">
+                    Olá, eu sou <span class="text-gradient-light">{{ site_settings.owner_name or 'Pedro' }}</span>
+                </h1>
+                <p class="lead text-white-75 mb-4 fade-in-up" style="animation-delay: 0.2s;">
+                    {{ site_settings.site_description or 'Desenvolvedor apaixonado por criar soluções digitais inovadoras e experiências únicas.' }}
+                </p>
+                <div class="d-flex gap-3 flex-wrap fade-in-up" style="animation-delay: 0.4s;">
+                    <a href="{{ url_for('projects') }}" class="btn btn-light btn-lg rounded-pill px-4">
+                        <i class="fas fa-folder-open me-2"></i>Ver Projetos
+                    </a>
+                    <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                        <i class="fas fa-user me-2"></i>Sobre Mim
+                    </a>
+                    {% if site_settings.linkedin_url %}
+                    <a href="{{ site_settings.linkedin_url }}" target="_blank" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                        <i class="fab fa-linkedin me-2"></i>LinkedIn
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center fade-in-up" style="animation-delay: 0.6s;">
+                <div class="hero-image-wrapper">
+                    {% if site_settings.hero_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + site_settings.hero_image) }}" 
+                         alt="{{ site_settings.owner_name }}" class="hero-image img-fluid rounded-3 shadow-lg">
+                    {% else %}
+                    <div class="hero-placeholder bg-light rounded-3 shadow-lg p-5 text-center">
+                        <i class="fas fa-user fa-5x text-muted mb-3"></i>
+                        <p class="text-muted">Sua foto aqui</p>
                     </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+        <a href="#featured-projects" class="text-white">
+            <i class="fas fa-chevron-down fa-2x"></i>
+        </a>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stats-number text-primary fw-bold">{{ project_count or 0 }}</div>
+                    <div class="stats-label text-muted">Projetos</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stats-number text-success fw-bold">{{ total_likes or 0 }}</div>
+                    <div class="stats-label text-muted">Curtidas</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stats-number text-info fw-bold">{{ total_comments or 0 }}</div>
+                    <div class="stats-label text-muted">Comentários</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="text-center">
+                    <div class="stats-number text-warning fw-bold">{{ years_experience or 2 }}+</div>
+                    <div class="stats-label text-muted">Anos</div>
                 </div>
             </div>
         </div>
@@ -31,133 +92,197 @@
 
 <!-- Featured Projects -->
 {% if featured_projects %}
-<section class="py-5">
+<section id="featured-projects" class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold text-gradient">Featured Projects</h2>
-            <p class="lead text-muted">Highlighting my best work</p>
+            <h2 class="display-5 fw-bold text-gradient animate-on-scroll">Projetos em Destaque</h2>
+            <p class="lead text-muted animate-on-scroll">Conheça alguns dos meus trabalhos mais importantes</p>
         </div>
         
         <div class="row g-4">
             {% for project in featured_projects %}
-            <div class="col-lg-4 col-md-6">
-                {% include 'components/project_card.html' %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-{% endif %}
-
-<!-- Recent Projects -->
-{% if recent_projects %}
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="display-6 fw-bold">Recent Work</h2>
-            <p class="lead text-muted">My latest projects and achievements</p>
-        </div>
-        
-        <div class="row g-4">
-            {% for project in recent_projects %}
-            <div class="col-lg-4 col-md-6">
-                {% include 'components/project_card.html' %}
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="card project-card border-0 shadow-sm h-100">
+                    {% if project.featured_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + project.featured_image) }}" 
+                         class="card-img-top" alt="{{ project.title }}">
+                    {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 240px;">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-body p-4">
+                        <h5 class="card-title fw-semibold">{{ project.title }}</h5>
+                        <p class="card-text text-muted">{{ project.description[:120] }}{% if project.description|length > 120 %}...{% endif %}</p>
+                        
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            {% for tag in project.tags[:3] %}
+                            <span class="tag">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="{{ url_for('project_detail', id=project.id) }}" 
+                                   class="btn btn-primary btn-sm rounded-pill px-3">
+                                    <i class="fas fa-eye me-1"></i>Ver Detalhes
+                                </a>
+                                {% if project.demo_url %}
+                                <a href="{{ project.demo_url }}" target="_blank" 
+                                   class="btn btn-outline-secondary btn-sm rounded-pill px-3 ms-2">
+                                    <i class="fas fa-external-link-alt me-1"></i>Demo
+                                </a>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Like button -->
+                            <button class="like-btn {% if project.user_has_liked %}liked{% endif %}" 
+                                    data-project-id="{{ project.id }}"
+                                    {% if not current_user.is_authenticated %}disabled title="Faça login para curtir"{% endif %}>
+                                <i class="{% if project.user_has_liked %}fas{% else %}far{% endif %} fa-heart"></i>
+                                <span class="like-count">{{ project.likes|length }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
         
         <div class="text-center mt-5">
-            <a href="{{ url_for('projects') }}" class="btn btn-primary btn-lg">
-                <i class="fas fa-arrow-right me-2"></i>View All Projects
+            <a href="{{ url_for('projects') }}" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                <i class="fas fa-folder-open me-2"></i>Ver Todos os Projetos
             </a>
         </div>
     </div>
 </section>
 {% endif %}
 
-<!-- Skills & Technologies (if no projects yet) -->
-{% if not recent_projects and not featured_projects %}
-<section class="py-5">
+<!-- Recent Projects -->
+{% if recent_projects and recent_projects != featured_projects %}
+<section class="py-5 bg-light">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h2 class="display-6 fw-bold mb-4">Building Something Amazing</h2>
-                <p class="lead text-muted mb-5">
-                    This portfolio is currently being crafted with passion and creativity. 
-                    Check back soon to see the latest projects and achievements.
-                </p>
-                
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="p-4 bg-light rounded-3 shadow-sm">
-                            <i class="fas fa-code fa-3x text-primary mb-3"></i>
-                            <h4>Development</h4>
-                            <p class="text-muted">Full-stack web development with modern technologies</p>
-                        </div>
+        <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold animate-on-scroll">Trabalhos Recentes</h2>
+            <p class="text-muted animate-on-scroll">Meus projetos mais recentes</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for project in recent_projects[:6] %}
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="card project-card border-0 shadow-sm h-100">
+                    {% if project.featured_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + project.featured_image) }}" 
+                         class="card-img-top" alt="{{ project.title }}">
+                    {% else %}
+                    <div class="card-img-top bg-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-code fa-2x text-muted"></i>
                     </div>
-                    <div class="col-md-4">
-                        <div class="p-4 bg-light rounded-3 shadow-sm">
-                            <i class="fas fa-paint-brush fa-3x text-primary mb-3"></i>
-                            <h4>Design</h4>
-                            <p class="text-muted">Creative UI/UX design and visual storytelling</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="p-4 bg-light rounded-3 shadow-sm">
-                            <i class="fas fa-lightbulb fa-3x text-primary mb-3"></i>
-                            <h4>Innovation</h4>
-                            <p class="text-muted">Problem-solving through innovative solutions</p>
+                    {% endif %}
+                    
+                    <div class="card-body p-3">
+                        <h6 class="card-title fw-semibold">{{ project.title }}</h6>
+                        <p class="card-text text-muted small">{{ project.description[:100] }}{% if project.description|length > 100 %}...{% endif %}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('project_detail', id=project.id) }}" 
+                               class="btn btn-sm btn-outline-primary rounded-pill">
+                                Ver mais
+                            </a>
+                            <small class="text-muted">{{ project.created_at.strftime('%d/%m/%Y') }}</small>
                         </div>
                     </div>
                 </div>
-                
-                {% if current_user.is_authenticated and current_user.is_admin %}
-                <div class="mt-5">
-                    <a href="{{ url_for('admin_new_project') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-plus me-2"></i>Add Your First Project
-                    </a>
-                </div>
-                {% endif %}
             </div>
+            {% endfor %}
         </div>
     </div>
 </section>
 {% endif %}
 
 <!-- Call to Action -->
-<section class="py-5 bg-primary text-white">
+<section class="py-5">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h3 class="fw-bold mb-2">Ready to Work Together?</h3>
-                <p class="lead mb-0">
-                    Let's create something amazing together. Get in touch to discuss your next project.
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-6 fw-bold mb-4 animate-on-scroll">Vamos Trabalhar Juntos?</h2>
+                <p class="lead text-muted mb-4 animate-on-scroll">
+                    Tenho sempre interesse em discutir oportunidades de colaboração e novos projetos desafiadores.
                 </p>
-            </div>
-            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                {% if site_settings.email_contact %}
-                <a href="mailto:{{ site_settings.email_contact }}" class="btn btn-light btn-lg">
-                    <i class="fas fa-envelope me-2"></i>Get in Touch
-                </a>
-                {% else %}
-                <a href="{{ url_for('about') }}" class="btn btn-light btn-lg">
-                    <i class="fas fa-user me-2"></i>Learn More
-                </a>
-                {% endif %}
+                <div class="d-flex gap-3 justify-content-center flex-wrap animate-on-scroll">
+                    {% if site_settings.email_contact %}
+                    <a href="mailto:{{ site_settings.email_contact }}" class="btn btn-primary btn-lg rounded-pill px-4">
+                        <i class="fas fa-envelope me-2"></i>Entre em Contato
+                    </a>
+                    {% endif %}
+                    {% if site_settings.linkedin_url %}
+                    <a href="{{ site_settings.linkedin_url }}" target="_blank" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                        <i class="fab fa-linkedin me-2"></i>LinkedIn
+                    </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Newsletter Signup (Optional) -->
+{% if site_settings.newsletter_enabled %}
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                <h3 class="fw-bold mb-3">Fique por Dentro</h3>
+                <p class="mb-4">Receba notificações sobre novos projetos e conteúdos.</p>
+                <form class="d-flex gap-2 justify-content-center">
+                    <input type="email" class="form-control rounded-pill" placeholder="Seu e-mail" required>
+                    <button type="submit" class="btn btn-light rounded-pill px-4">Inscrever</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
 {% endblock %}
 
-{% block extra_js %}
-<script>
-// Add staggered animation to hero elements
-document.addEventListener('DOMContentLoaded', function() {
-    const heroElements = document.querySelectorAll('.hero-content .fade-in-up');
-    heroElements.forEach((el, index) => {
-        el.style.animationDelay = `${index * 0.2}s`;
-    });
-});
-</script>
+{% block extra_css %}
+<style>
+.min-vh-75 { min-height: 75vh; }
+.text-white-75 { color: rgba(255, 255, 255, 0.85); }
+.text-gradient-light {
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-image {
+    max-width: 400px;
+    border-radius: 1rem !important;
+}
+.hero-placeholder {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+}
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+}
+.stats-number { font-size: 2.5rem; line-height: 1; }
+.stats-label { font-size: 0.9rem; font-weight: 500; }
+</style>
 {% endblock %}

@@ -1,135 +1,166 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="pt-BR" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     {% block meta %}
-    <meta name="description" content="{{ site_settings.site_description }}">
-    <meta name="author" content="{{ site_settings.owner_name }}">
+    <meta name="description" content="{{ site_settings.site_description or 'Portfólio digital pessoal' }}">
+    <meta name="author" content="{{ site_settings.owner_name or 'Pedro' }}">
+    <meta property="og:title" content="{% block og_title %}{{ site_settings.site_title or 'Meu Portfólio' }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ site_settings.site_description or 'Conheça meus projetos e conquistas' }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='img/og-image.jpg', _external=True) }}{% endblock %}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta name="twitter:card" content="summary_large_image">
     {% endblock %}
     
-    <title>{% block title %}{{ site_settings.site_title }}{% endblock %}</title>
+    <title>{% block title %}{{ site_settings.site_title or 'Meu Portfólio' }}{% endblock %}</title>
     
-    <!-- Bootstrap CSS with Replit theme -->
-    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-portfolio me-2"></i>
-                {{ site_settings.site_title }}
+            <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                <i class="fas fa-code text-primary me-2"></i>
+                {{ site_settings.site_title or 'Meu Portfólio' }}
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('index') }}">Início</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('projects') }}">Projects</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('projects') }}">Projetos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                        <a class="nav-link fw-medium" href="{{ url_for('about') }}">Sobre</a>
                     </li>
                 </ul>
                 
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <!-- Theme toggle -->
-                    <li class="nav-item">
-                        <button id="theme-toggle" class="btn btn-outline-light theme-toggle me-2">
-                            <i class="fas fa-sun"></i>
+                    <li class="nav-item me-3">
+                        <button id="theme-toggle" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                            <i id="theme-icon" class="fas fa-moon me-1"></i>
+                            <span id="theme-text">Escuro</span>
                         </button>
                     </li>
                     
                     {% if current_user.is_authenticated %}
                         {% if current_user.is_admin %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <li class="nav-item dropdown me-2">
+                            <a class="nav-link dropdown-toggle btn btn-primary text-white px-3 py-1 rounded-pill" href="#" data-bs-toggle="dropdown">
                                 <i class="fas fa-cog me-1"></i> Admin
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin_projects') }}">Manage Projects</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('admin_new_project') }}">New Project</a></li>
+                            <ul class="dropdown-menu shadow border-0">
+                                <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin_projects') }}">
+                                    <i class="fas fa-folder me-2"></i>Gerenciar Projetos
+                                </a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin_new_project') }}">
+                                    <i class="fas fa-plus me-2"></i>Novo Projeto
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin_settings') }}">
+                                    <i class="fas fa-cogs me-2"></i>Configurações
+                                </a></li>
                             </ul>
                         </li>
                         {% endif %}
                         
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
                                 {% if current_user.profile_image %}
-                                <img src="{{ url_for('uploaded_file', filename='profiles/' + current_user.profile_image) }}" 
-                                     alt="Profile" class="profile-img me-1">
+                                <img src="{{ url_for('static', filename='uploads/' + current_user.profile_image) }}" 
+                                     class="rounded-circle me-2" width="32" height="32" alt="Perfil">
                                 {% else %}
-                                <i class="fas fa-user me-1"></i>
+                                <img src="{{ url_for('static', filename='img/default-avatar.svg') }}" 
+                                     class="rounded-circle me-2" width="32" height="32" alt="Perfil">
                                 {% endif %}
-                                {{ current_user.first_name }}
+                                <span class="d-none d-md-inline">{{ current_user.first_name }}</span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">Edit Profile</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                <li><a class="dropdown-item" href="{{ url_for('profile') }}">
+                                    <i class="fas fa-user me-2"></i>Meu Perfil
+                                </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Sair
+                                </a></li>
                             </ul>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        <li class="nav-item me-2">
+                            <a class="btn btn-outline-primary rounded-pill px-3" href="{{ url_for('login') }}">
+                                <i class="fas fa-sign-in-alt me-1"></i>Entrar
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                            <a class="btn btn-primary rounded-pill px-3" href="{{ url_for('register') }}">
+                                <i class="fas fa-user-plus me-1"></i>Cadastrar
+                            </a>
                         </li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
-    
-    <!-- Flash messages -->
-    <div class="container mt-3">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
                 {% for category, message in messages %}
-                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show m-0 rounded-0" role="alert">
+                    <div class="container">
+                        <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
                 </div>
                 {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
-    
-    <!-- Main content -->
-    <main class="flex-grow-1">
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
         {% block content %}{% endblock %}
     </main>
-    
+
     <!-- Footer -->
-    <footer class="footer bg-dark text-light py-4 mt-5">
+    <footer class="bg-light mt-auto py-4 border-top">
         <div class="container">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h5>{{ site_settings.owner_name }}</h5>
-                    <p class="mb-1">{{ site_settings.owner_title }}</p>
+                    <h6 class="mb-2">{{ site_settings.owner_name or 'Pedro' }}</h6>
+                    <p class="text-muted small mb-2">{{ site_settings.owner_title or 'Desenvolvedor & Designer' }}</p>
                     {% if site_settings.email_contact %}
                     <p class="mb-0">
-                        <i class="fas fa-envelope me-2"></i>
-                        <a href="mailto:{{ site_settings.email_contact }}" class="text-light">
+                        <i class="fas fa-envelope me-2 text-primary"></i>
+                        <a href="mailto:{{ site_settings.email_contact }}" class="text-decoration-none">
                             {{ site_settings.email_contact }}
                         </a>
                     </p>
@@ -138,23 +169,23 @@
                 <div class="col-md-6 text-md-end">
                     <div class="social-links mb-3">
                         {% if site_settings.linkedin_url %}
-                        <a href="{{ site_settings.linkedin_url }}" class="text-light me-3" target="_blank">
-                            <i class="fab fa-linkedin fa-lg"></i>
+                        <a href="{{ site_settings.linkedin_url }}" class="btn btn-outline-primary btn-sm rounded-circle me-2" target="_blank" rel="noopener">
+                            <i class="fab fa-linkedin"></i>
                         </a>
                         {% endif %}
                         {% if site_settings.github_url %}
-                        <a href="{{ site_settings.github_url }}" class="text-light me-3" target="_blank">
-                            <i class="fab fa-github fa-lg"></i>
+                        <a href="{{ site_settings.github_url }}" class="btn btn-outline-dark btn-sm rounded-circle me-2" target="_blank" rel="noopener">
+                            <i class="fab fa-github"></i>
                         </a>
                         {% endif %}
                         {% if site_settings.twitter_url %}
-                        <a href="{{ site_settings.twitter_url }}" class="text-light me-3" target="_blank">
-                            <i class="fab fa-twitter fa-lg"></i>
+                        <a href="{{ site_settings.twitter_url }}" class="btn btn-outline-info btn-sm rounded-circle me-2" target="_blank" rel="noopener">
+                            <i class="fab fa-twitter"></i>
                         </a>
                         {% endif %}
                     </div>
-                    <p class="mb-0">
-                        &copy; 2024 {{ site_settings.owner_name }}. All rights reserved.
+                    <p class="text-muted small mb-0">
+                        &copy; 2024 {{ site_settings.owner_name or 'Pedro' }}. Todos os direitos reservados.
                     </p>
                 </div>
             </div>
@@ -165,10 +196,10 @@
     <div class="toast-container position-fixed top-0 end-0 p-3"></div>
     
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modern.js') }}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -30,7 +30,7 @@ class User(UserMixin, db.Model):
     
     def generate_reset_token(self):
         self.reset_token = secrets.token_urlsafe(32)
-        self.reset_token_expires = datetime.utcnow() + datetime.timedelta(hours=1)
+        self.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
         return self.reset_token
     
     def verify_reset_token(self, token):
@@ -100,11 +100,11 @@ class Project(db.Model):
     
     @property
     def like_count(self):
-        return len(self.likes)
+        return Like.query.filter_by(project_id=self.id).count()
     
     @property
     def comment_count(self):
-        return len(self.comments)
+        return Comment.query.filter_by(project_id=self.id).count()
     
     def is_liked_by(self, user):
         if not user.is_authenticated:
